@@ -30,8 +30,8 @@ public class PeriodicUpdater implements QueuesWebSocket.QueueWebSocketListener {
 
     private void setup() {
         periodicService.scheduleWithFixedDelay(
-                () -> update((update) -> queuesWebsocket.getOpenSessions().forEach(s -> s.send(update))),
-                10, 200, TimeUnit.SECONDS);
+                update((update) -> queuesWebsocket.getOpenSessions().forEach(s -> s.send(update))),
+                0, 5, TimeUnit.SECONDS);
     }
 
     private Runnable update(Consumer<Queue> updateConsumer) {

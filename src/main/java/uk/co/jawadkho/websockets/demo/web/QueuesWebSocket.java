@@ -31,7 +31,7 @@ public class QueuesWebSocket {
         LOGGER.info("Session {} started.", session.getRemoteAddress().getHostString());
         openSessions.add(session);
         if (listener != null) {
-            LOGGER.info("Calling listener with session {}.", session.getRemoteAddress().getHostString());
+            LOGGER.info("onSessionStarted() with session {}.", session.getRemoteAddress().getHostString());
             listener.onSessionStarted(new QueuesUpdateReceiver(session));
         }
     }

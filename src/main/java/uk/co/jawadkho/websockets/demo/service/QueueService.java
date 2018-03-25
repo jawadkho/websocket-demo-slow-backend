@@ -11,7 +11,7 @@ import java.util.concurrent.Semaphore;
 public class QueueService {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueueService.class);
 
-    private static final int NUM_ENDPOINTS = 100;
+    private static final int NUM_ENDPOINTS = 20;
     private static final int MAX_ATTRIBUTE_PERMITS = 5;
 
     private final List<Endpoint> endpoints;
