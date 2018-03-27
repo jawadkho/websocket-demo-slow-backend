@@ -29,29 +29,29 @@ public class PeriodicUpdater implements QueuesWebSocket.QueueWebSocketListener {
     }
 
     private void setup() {
-        periodicService.scheduleWithFixedDelay(
-                update((update) -> queuesWebsocket.getOpenSessions().forEach(s -> s.send(update))),
+        periodicService.scheduleWithFixedDelay(() -> 
+                update((update) -> 
+                        queuesWebsocket.getOpenSessions()
+                                .forEach(s -> s.send(update))),
                 0, 5, TimeUnit.SECONDS);
     }
 
-    private Runnable update(Consumer<Queue> updateConsumer) {
-        return () -> {
-                if (queuesWebsocket.getOpenSessions().size() > 0) {
-                    LOGGER.info("Updating open sessions.");
-                    queueService.listEndpoints().forEach((endpoint ->
-                            supplyAsync(() -> {
-                                QueueService.Attributes attributes = queueService.getAttributes(endpoint);
-                                return new Queue(endpoint, attributes);
-                            }, executor)
-                            .thenAccept(updateConsumer)));
-                } else {
-                    LOGGER.info("No sessions open. Skipping update.");
-                }
-        };
+    private void update(Consumer<Queue> updateConsumer) {
+        if (queuesWebsocket.getOpenSessions().size() > 0) {
+            LOGGER.info("Updating open sessions.");
+            queueService.listEndpoints().forEach((endpoint ->
+                    supplyAsync(() -> {
+                        QueueService.Attributes attributes = queueService.getAttributes(endpoint);
+                        return new Queue(endpoint, attributes);
+                    }, executor)
+                    .thenAccept(updateConsumer)));
+        } else {
+            LOGGER.info("No sessions open. Skipping update.");
+        }
     }
 
     @Override
     public void onSessionStarted(QueuesWebSocket.QueuesUpdateReceiver updateReceiver) {
-        update(updateReceiver::send).run();
+        update(updateReceiver::send);
     }
 }
